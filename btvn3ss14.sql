@@ -1,21 +1,19 @@
 -- Xóa thủ tục cũ nếu đã tồn tại
-DROP PROCEDURE IF EXISTS ProcessPrescription;
+DROP PROCEDURE IF EXISTS Process_prescription;
 
 DELIMITER //
 
--- Khởi tạo Procedure với các tham số IN và OUT chuẩn coder
-CREATE PROCEDURE ProcessPrescription(
+-- Khởi tạo Procedure
+CREATE PROCEDURE Process_prescription(
     IN p_patient_id INT,
     IN p_medicine_id INT,
     IN p_quantity INT,
     OUT p_status_message VARCHAR(255)
 )
 BEGIN
-    -- Khai báo các biến cục bộ để lưu trữ tạm thời thông tin thuốc
     DECLARE v_current_stock INT;
     DECLARE v_unit_price DECIMAL(18,2);
 
-    -- Khai báo khối xử lý ngoại lệ (Exception Handler) cho các lỗi hệ thống chung
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -25,14 +23,12 @@ BEGIN
     -- Bắt đầu khối giao dịch
     START TRANSACTION;
 
-        -- Lấy số lượng tồn kho và đơn giá hiện tại của thuốc
         SELECT stock_quantity, unit_price 
         INTO v_current_stock, v_unit_price
         FROM Medicines
         WHERE medicine_id = p_medicine_id
         FOR UPDATE;
 
-        -- Kiểm tra logic nghiệp vụ
         IF p_quantity > v_current_stock THEN
             -- Hủy bỏ giao dịch và trả về thông báo lỗi
             SET p_status_message = 'Lỗi: Số lượng tồn kho không đủ';
