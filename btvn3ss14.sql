@@ -54,8 +54,8 @@ END //
 DELIMITER ;
 
 -- TRƯỜNG HỢP 1: Cấp phát hợp lệ (Số lượng yêu cầu <= Tồn kho)
-CALL ProcessPrescription(1, 101, 2, @status_success);
+CALL Process_prescription(1, 101, 2, @status_success);
 SELECT @status_success AS Result_Message; 
 -- TRƯỜNG HỢP 2: Chặn và báo lỗi (Số lượng yêu cầu > Tồn kho)
-CALL ProcessPrescription(2, 105, 100, @status_error);
+CALL Process_prescription(2, 105, 100, @status_error);
 SELECT @status_error AS Result_Message;
